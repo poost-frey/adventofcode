@@ -9,19 +9,11 @@ GOGET=$(GOCMD) get
 GOOS=windows
 GOARCH=amd64
 
-all: run-01b
-build-01a: 
-		GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o ./cmd/01a/bin/01a -v ./cmd/01a/*.go 
-run-01a: build-01a
-		./cmd/01a/bin/01a
-build-01b: 
-		GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o ./cmd/01b/bin/01b -v ./cmd/01b/*.go 
-run-01b: build-01b
-		./cmd/01b/bin/01b
-build-02a: 
-		GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o ./cmd/02a/bin/02a -v ./cmd/02a/*.go 
-run-02a: build-02a
-		./cmd/02a/bin/02a
+all: run
+build: 
+		GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o ./cmd/02b/bin/02b -v ./cmd/02b/*.go 
+run: build
+		./cmd/02b/bin/02b
 clean: 
 		$(GOCLEAN)
 		rm -f ./cmd/*/bin/*
