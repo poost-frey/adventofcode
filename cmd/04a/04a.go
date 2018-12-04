@@ -31,9 +31,56 @@ func main() {
 
 	records := buildRecords(input)
 
+	history := make(map[int][]int)
 	for _, rec := range records {
-		fmt.Printf("%v\n", rec)
+		// init guard in history
+		_, exists := history[rec.ID]
+		if !exists {
+			history[rec.ID] = make([]int, 60)
+		}
+
+		// mark sleeping times in schedule
+		for min, asleep := range rec.Asleep {
+			if asleep {
+				history[rec.ID][min]++
+			}
+		}
 	}
+
+	// find sleepiest guard and minute
+	sleepiestGuard := parsedHistory{}
+	for id, schedule := range history {
+		currentGuard := parsedHistory{ID: id}
+		for min, sleepCount := range schedule {
+			currentGuard.sleepCount += sleepCount
+			if sleepCount > currentGuard.sleepiestMinHits {
+				currentGuard.sleepiestMinHits = sleepCount
+				currentGuard.sleepiestMin = min
+			}
+		}
+
+		if currentGuard.sleepCount > sleepiestGuard.sleepCount {
+			sleepiestGuard = currentGuard
+		}
+	}
+
+	fmt.Printf(
+		"sleepiest guard #%v slept for %v min\n",
+		sleepiestGuard.ID,
+		sleepiestGuard.sleepCount,
+	)
+	fmt.Printf(
+		"with the sleepiest min being %v that occured %v times\n",
+		sleepiestGuard.sleepiestMin,
+		sleepiestGuard.sleepiestMinHits,
+	)
+}
+
+type parsedHistory struct {
+	ID               int
+	sleepCount       int
+	sleepiestMin     int
+	sleepiestMinHits int
 }
 
 type record struct {
