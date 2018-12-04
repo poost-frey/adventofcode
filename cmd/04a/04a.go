@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strconv"
 )
 
@@ -36,11 +37,10 @@ func main() {
 }
 
 type record struct {
-	ID         int
-	Month      int
-	Day        int
-	SleepStart int
-	WakeStart  int
+	ID     int
+	Month  int
+	Day    int
+	Asleep []bool
 }
 
 type sleep struct {
@@ -62,7 +62,7 @@ func buildRecords(input []string) []record {
 }
 
 func findGuards(input []string, sleeps []sleep, wakes []wake) (records []record) {
-	regex, _ := regexp.Compile("-(\\d{2})-(\\d{2}) \\d{2}:\\d{2}\\] Guard #(\\d+)")
+	regex, _ := regexp.Compile("-(\\d{2})-(\\d{2}) (\\d{2}):\\d{2}\\] Guard #(\\d+)")
 
 	for _, str := range input {
 		matches := regex.FindAllStringSubmatch(str, 10)
@@ -71,15 +71,26 @@ func findGuards(input []string, sleeps []sleep, wakes []wake) (records []record)
 			month := atoi(matches[0][1])
 			day := atoi(matches[0][2])
 
-			sleepMin := findSleepMin(sleeps, month, day)
-			wakeMin := findWakeMin(wakes, month, day)
+			if atoi(matches[0][3]) == 23 {
+				day++
+			}
+
+			sleepMins := findSleepsByDay(sleeps, month, day)
+			wakeMins := findWakesByDay(wakes, month, day)
+
+			schedule := make([]bool, 60)
+
+			for ind, s := range sleepMins {
+				for i := s; i < wakeMins[ind]; i++ {
+					schedule[i] = true
+				}
+			}
 
 			records = append(records, record{
-				ID:         atoi(matches[0][3]),
-				Month:      month,
-				Day:        day,
-				SleepStart: sleepMin,
-				WakeStart:  wakeMin,
+				ID:     atoi(matches[0][4]),
+				Month:  month,
+				Day:    day,
+				Asleep: schedule,
 			})
 		}
 	}
@@ -120,22 +131,24 @@ func getWakes(input []string) (wakes []wake) {
 	return
 }
 
-func findSleepMin(sleeps []sleep, month int, day int) int {
+func findSleepsByDay(sleeps []sleep, month int, day int) (output []int) {
 	for _, sleep := range sleeps {
 		if sleep.Month == month && sleep.Day == day {
-			return sleep.Minute
+			output = append(output, sleep.Minute)
 		}
 	}
-	return -1
+	sort.Ints(output)
+	return output
 }
 
-func findWakeMin(wakes []wake, month int, day int) int {
+func findWakesByDay(wakes []wake, month int, day int) (output []int) {
 	for _, wake := range wakes {
 		if wake.Month == month && wake.Day == day {
-			return wake.Minute
+			output = append(output, wake.Minute)
 		}
 	}
-	return -1
+	sort.Ints(output)
+	return output
 }
 
 func atoi(str string) int {
