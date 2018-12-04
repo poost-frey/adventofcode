@@ -1,0 +1,8 @@
+#IDE Stuff
+.vscode
+
+#binaries
+/cmd/*/bin/
+
+#vendored dependencies
+/vendor/
