@@ -59,7 +59,7 @@ func main() {
 			}
 		}
 
-		if currentGuard.sleepCount > sleepiestGuard.sleepCount {
+		if currentGuard.sleepiestMinHits > sleepiestGuard.sleepiestMinHits {
 			sleepiestGuard = currentGuard
 		}
 	}
