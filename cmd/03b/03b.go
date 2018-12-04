@@ -17,6 +17,7 @@ func main() {
 
 	claims := buildClaims(input)
 	cloth := prepareMatrix(1000)
+	nonOverlappingInd := -1
 
 	// map out claims on cloth
 	for _, c := range claims {
@@ -33,6 +34,24 @@ func main() {
 		}
 	}
 
+	// find non-overlapping claim
+	for claimInd, c := range claims {
+		overlapped := false
+		for i := 0; i < c.Width; i++ {
+			for j := 0; j < c.Height; j++ {
+				x := c.X + i
+				y := c.Y + j
+				if cloth[x][y] > 1 {
+					overlapped = true
+				}
+			}
+		}
+
+		if !overlapped {
+			nonOverlappingInd = claimInd
+		}
+	}
+
 	// count overlaps
 	overlap := 0
 	for _, row := range cloth {
@@ -44,6 +63,7 @@ func main() {
 	}
 
 	fmt.Printf("square inches of overlap: %v\n", overlap)
+	fmt.Printf("non-overlapping ind = %v, claim = %s\n", nonOverlappingInd, input[nonOverlappingInd])
 }
 
 type claim struct {

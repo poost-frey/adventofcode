@@ -11,9 +11,9 @@ GOARCH=amd64
 
 all: run
 build: 
-		GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o ./cmd/03a/bin/03a -v ./cmd/03a/*.go 
+		GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o ./cmd/03b/bin/03b -v ./cmd/03b/*.go 
 run: build
-		./cmd/03a/bin/03a
+		./cmd/03b/bin/03b
 clean: 
 		$(GOCLEAN)
 		rm -f ./cmd/*/bin/*
