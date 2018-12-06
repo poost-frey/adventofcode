@@ -28,8 +28,7 @@ func main() {
 		}
 	}
 
-	bound := getBounds(coordinates)
-	count := getCount(grid, coordinates, bound)
+	count := getCount(grid, coordinates)
 
 	//print grid
 	alphabet := "abcdefgh"
@@ -71,8 +70,8 @@ func determineClosest(coordinates []pos, currentX int, currentY int) int {
 	return closestInd
 }
 
-func getCount(grid [][]int, coordinates []pos, bound bounds) (max int) {
-	excluded := getExcludedCoordinateInds(coordinates, bound)
+func getCount(grid [][]int, coordinates []pos) (max int) {
+	excluded := getExcludedCoordinateInds(grid)
 	count := make([]int, len(coordinates))
 	for _, row := range grid {
 		for _, value := range row {
@@ -99,11 +98,18 @@ func isExcluded(excluded []int, item int) bool {
 	return false
 }
 
-func getExcludedCoordinateInds(coordinates []pos, bound bounds) (excluded []int) {
-	for ind, p := range coordinates {
-		if p.X == bound.minX || p.X == bound.maxX || p.Y == bound.minY || p.Y == bound.maxY {
-			excluded = append(excluded, ind)
-		}
+func getExcludedCoordinateInds(grid [][]int) (excluded []int) {
+	m := make(map[int]bool)
+	max := len(grid) - 1
+	for i := 0; i <= max; i++ {
+		m[grid[0][i]] = true
+		m[grid[max][i]] = true
+		m[grid[i][0]] = true
+		m[grid[i][max]] = true
+	}
+
+	for key := range m {
+		excluded = append(excluded, key)
 	}
 	return
 }
@@ -125,32 +131,6 @@ func initGrid(c []pos) [][]int {
 		output[ind] = make([]int, max*coefficient)
 	}
 	return output
-}
-
-type bounds struct {
-	minX int
-	maxX int
-	minY int
-	maxY int
-}
-
-func getBounds(coordinates []pos) bounds {
-	b := bounds{minX: -1, maxX: -1, minY: -1, maxY: -1}
-	for _, c := range coordinates {
-		if b.minX == -1 || c.X < b.minX {
-			b.minX = c.X
-		}
-		if b.maxX == -1 || c.X > b.maxX {
-			b.maxX = c.X
-		}
-		if b.minY == -1 || c.Y < b.minY {
-			b.minY = c.Y
-		}
-		if b.maxY == -1 || c.Y > b.maxY {
-			b.maxY = c.Y
-		}
-	}
-	return b
 }
 
 type pos struct {

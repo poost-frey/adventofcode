@@ -1,5 +1,7 @@
 #IDE Stuff
 .vscode
+.idea
+*.iml
 
 #binaries
 /cmd/*/bin/
