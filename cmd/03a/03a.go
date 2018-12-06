@@ -1,4 +1,3 @@
-// Package main is for the core binary to play the game
 package main
 
 import (
